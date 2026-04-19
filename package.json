@@ -1,0 +1,26 @@
+{
+  "name": "secure-encryptor",
+  "version": "1.0.0",
+  "description": "Cross-platform file encryption — AES-256-GCM + Argon2id",
+  "main": "src/index.js",
+  "scripts": {
+    "encrypt": "node src/cli/index.js encrypt",
+    "decrypt": "node src/cli/index.js decrypt",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/ tests/"
+  },
+  "keywords": ["encryption", "aes-gcm", "argon2id", "cryptography", "security"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "argon2": "^0.41.1"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
