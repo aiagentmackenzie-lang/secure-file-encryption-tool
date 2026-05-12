@@ -92,21 +92,6 @@ function printUsage() {
   ].join('\n'));
 }
 
-/**
- * Resolves a path to an absolute path and validates it.
- * @param {string} filePath 
- * @returns {string} absolute path
- */
-function resolveAndValidatePath(filePath) {
-  const resolved = path.resolve(filePath);
-  // Prevent directory traversal attacks
-  const cwd = process.cwd();
-  if (!resolved.startsWith(cwd) && !path.isAbsolute(resolved)) {
-    // Allow absolute paths but warn - they could be anywhere
-  }
-  return resolved;
-}
-
 async function main() {
   const [,, command, filePath] = process.argv;
 
