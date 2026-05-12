@@ -2,9 +2,9 @@
 // Exports SEFT as a Node.js library for programmatic / embedded use.
 // Allows other applications to integrate SEFT encryption without the CLI layer.
 
-const { encryptFile } = require('./crypto/encrypt');
-const { decryptFile } = require('./crypto/decrypt');
-const { writeEncryptedFile, readEncryptedFile } = require('./utils/fileHandler');
+const { encryptFile } = require("./crypto/encrypt");
+const { decryptFile } = require("./crypto/decrypt");
+const { writeEncryptedFile, readEncryptedFile } = require("./utils/fileHandler");
 
 module.exports = {
   encryptFile,

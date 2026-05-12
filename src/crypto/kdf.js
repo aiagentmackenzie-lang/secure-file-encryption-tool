@@ -8,13 +8,13 @@
 // SECURITY NOTE: The returned Buffer MUST be zeroed by the caller with
 // key.fill(0) immediately after use. Never log, store, or transmit it.
 
-const argon2 = require('argon2');
+const argon2 = require("argon2");
 const {
   ARGON2_MEMORY,
   ARGON2_TIME,
   ARGON2_PARALLELISM,
   ARGON2_HASH_LENGTH,
-} = require('../utils/constants');
+} = require("../utils/constants");
 
 /**
  * Derives a cryptographic key from a password and salt using Argon2id.
@@ -24,10 +24,10 @@ const {
  */
 async function deriveKey(password, salt) {
   if (!Buffer.isBuffer(salt)) {
-    throw new TypeError('Salt must be a Buffer');
+    throw new TypeError("Salt must be a Buffer");
   }
-  if (typeof password !== 'string' || password.length === 0) {
-    throw new TypeError('Password must be a non-empty string');
+  if (typeof password !== "string" || password.length === 0) {
+    throw new TypeError("Password must be a non-empty string");
   }
   return await argon2.hash(password, {
     type: argon2.argon2id,

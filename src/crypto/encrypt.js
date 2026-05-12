@@ -9,9 +9,9 @@
 // ensuring that two encryptions of the same file with the same password
 // produce completely different ciphertext every time.
 
-const crypto = require('crypto');
-const { deriveKey } = require('./kdf');
-const { SALT_LENGTH, NONCE_LENGTH } = require('../utils/constants');
+const crypto = require("crypto");
+const { deriveKey } = require("./kdf");
+const { SALT_LENGTH, NONCE_LENGTH } = require("../utils/constants");
 
 /**
  * Encrypts a Buffer using AES-256-GCM with Argon2id key derivation.
@@ -24,10 +24,10 @@ const { SALT_LENGTH, NONCE_LENGTH } = require('../utils/constants');
  */
 async function encryptFile(buffer, password) {
   if (!Buffer.isBuffer(buffer) || buffer.length === 0) {
-    throw new Error('Input must be a non-empty Buffer');
+    throw new Error("Input must be a non-empty Buffer");
   }
-  if (typeof password !== 'string' || password.length < 8) {
-    throw new Error('Password must be at least 8 characters');
+  if (typeof password !== "string" || password.length < 8) {
+    throw new Error("Password must be at least 8 characters");
   }
 
   const salt = crypto.randomBytes(SALT_LENGTH);    // Fresh 256-bit salt
@@ -35,7 +35,7 @@ async function encryptFile(buffer, password) {
   const key = await deriveKey(password, salt);
 
   try {
-    const cipher = crypto.createCipheriv('aes-256-gcm', key, nonce);
+    const cipher = crypto.createCipheriv("aes-256-gcm", key, nonce);
     const encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
     const authTag = cipher.getAuthTag(); // Must be called AFTER cipher.final()
 

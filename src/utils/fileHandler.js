@@ -5,7 +5,6 @@
 // [ MAGIC(4) | VERSION(1) | SALT(32) | NONCE(12) | CIPHERTEXT(N) | AUTHTAG(16) ]
 
 const fs = require("fs");
-const path = require("path");
 const {
   MAGIC,
   VERSION,
@@ -28,10 +27,10 @@ const MIN_HEADER_SIZE = MAGIC.length + 1 + SALT_LENGTH + NONCE_LENGTH + AUTH_TAG
  */
 function validateBuffer(buf, expectedLength, name) {
   if (!Buffer.isBuffer(buf)) {
-    throw new Error('Invalid file: ' + name + ' is not a buffer');
+    throw new Error("Invalid file: " + name + " is not a buffer");
   }
   if (buf.length !== expectedLength) {
-    throw new Error('Invalid file: ' + name + ' has wrong length (expected ' + expectedLength + ', got ' + buf.length + ')');
+    throw new Error("Invalid file: " + name + " has wrong length (expected " + expectedLength + ", got " + buf.length + ")");
   }
 }
 
@@ -45,11 +44,11 @@ function writeEncryptedFile(outputPath, payload) {
   const { salt, nonce, encrypted, authTag } = payload;
   
   // Validate all buffers before writing
-  validateBuffer(salt, SALT_LENGTH, 'salt');
-  validateBuffer(nonce, NONCE_LENGTH, 'nonce');
-  validateBuffer(authTag, AUTH_TAG_LENGTH, 'authTag');
+  validateBuffer(salt, SALT_LENGTH, "salt");
+  validateBuffer(nonce, NONCE_LENGTH, "nonce");
+  validateBuffer(authTag, AUTH_TAG_LENGTH, "authTag");
   if (!Buffer.isBuffer(encrypted) || encrypted.length === 0) {
-    throw new Error('Invalid payload: encrypted must be a non-empty buffer');
+    throw new Error("Invalid payload: encrypted must be a non-empty buffer");
   }
 
   const versionBuf = Buffer.alloc(1);
@@ -78,11 +77,11 @@ function readEncryptedFile(inputPath) {
   try {
     const stats = fs.lstatSync(inputPath);
     if (stats.isSymbolicLink()) {
-      throw new Error('Invalid file: symlinks are not allowed for security reasons');
+      throw new Error("Invalid file: symlinks are not allowed for security reasons");
     }
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      throw new Error('File not found: ' + inputPath);
+    if (err.code === "ENOENT") {
+      throw new Error("File not found: " + inputPath);
     }
     throw err;
   }
@@ -91,7 +90,7 @@ function readEncryptedFile(inputPath) {
   
   // Check minimum file size
   if (file.length < MIN_HEADER_SIZE) {
-    throw new Error('Invalid file: file is too small or corrupted (size: ' + file.length + ')');
+    throw new Error("Invalid file: file is too small or corrupted (size: " + file.length + ")");
   }
   
   let offset = 0;
@@ -99,35 +98,35 @@ function readEncryptedFile(inputPath) {
   // Validate magic bytes
   const magic = file.subarray(offset, offset + MAGIC.length);
   if (!magic.equals(MAGIC)) {
-    throw new Error('Invalid file: not a SEFT-encrypted file (magic bytes mismatch)');
+    throw new Error("Invalid file: not a SEFT-encrypted file (magic bytes mismatch)");
   }
   offset += MAGIC.length;
 
   // Validate version
   const version = file.readUInt8(offset);
   if (version !== VERSION) {
-    throw new Error('Unsupported file version: 0x' + version.toString(16));
+    throw new Error("Unsupported file version: 0x" + version.toString(16));
   }
   offset += 1;
 
   // Parse and validate salt
   const salt = file.subarray(offset, offset + SALT_LENGTH);
-  validateBuffer(salt, SALT_LENGTH, 'salt');
+  validateBuffer(salt, SALT_LENGTH, "salt");
   offset += SALT_LENGTH;
 
   // Parse and validate nonce
   const nonce = file.subarray(offset, offset + NONCE_LENGTH);
-  validateBuffer(nonce, NONCE_LENGTH, 'nonce');
+  validateBuffer(nonce, NONCE_LENGTH, "nonce");
   offset += NONCE_LENGTH;
 
   // Auth tag is always the final AUTH_TAG_LENGTH bytes
   const authTag = file.subarray(file.length - AUTH_TAG_LENGTH);
-  validateBuffer(authTag, AUTH_TAG_LENGTH, 'authTag');
+  validateBuffer(authTag, AUTH_TAG_LENGTH, "authTag");
 
   // Ciphertext sits between nonce end and auth tag start
   const encrypted = file.subarray(offset, file.length - AUTH_TAG_LENGTH);
   if (encrypted.length === 0) {
-    throw new Error('Invalid file: ciphertext section is empty');
+    throw new Error("Invalid file: ciphertext section is empty");
   }
 
   return { salt, nonce, encrypted, authTag };

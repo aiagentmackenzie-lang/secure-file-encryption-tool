@@ -2,7 +2,6 @@
 // CLI entry point for SEFT — Secure Encryption File Tool.
 
 const fs = require("fs");
-const path = require("path");
 const { encryptFile } = require("../crypto/encrypt");
 const { decryptFile } = require("../crypto/decrypt");
 const { writeEncryptedFile, readEncryptedFile } = require("../utils/fileHandler");
@@ -16,36 +15,36 @@ function promptPassword(prompt) {
   return new Promise((resolve, reject) => {
     if (!process.stdin.isTTY) {
       return reject(new Error(
-        'Password input requires an interactive terminal (TTY). ' +
-        'Pipe input is not supported for security reasons.'
+        "Password input requires an interactive terminal (TTY). " +
+        "Pipe input is not supported for security reasons."
       ));
     }
 
     process.stdout.write(prompt);
-    let password = '';
+    let password = "";
 
     process.stdin.setRawMode(true);
     process.stdin.resume();
-    process.stdin.setEncoding('utf8');
+    process.stdin.setEncoding("utf8");
 
     function handler(char) {
       switch (char) {
-        case '\n':
-        case '\r':
-        case '\u0004': // EOF — Ctrl+D
+        case "\n":
+        case "\r":
+        case "\u0004": // EOF — Ctrl+D
           process.stdin.setRawMode(false);
           process.stdin.pause();
-          process.stdin.removeListener('data', handler);
-          process.stdout.write('\n');
+          process.stdin.removeListener("data", handler);
+          process.stdout.write("\n");
           resolve(password);
           break;
 
-        case '\u0003': // Ctrl+C — abort cleanly
-          process.stdout.write('\n');
+        case "\u0003": // Ctrl+C — abort cleanly
+          process.stdout.write("\n");
           process.exit(0);
           break;
 
-        case '\u007f': // Backspace
+        case "\u007f": // Backspace
           if (password.length > 0) {
             password = password.slice(0, -1);
           }
@@ -56,7 +55,7 @@ function promptPassword(prompt) {
       }
     }
 
-    process.stdin.on('data', handler);
+    process.stdin.on("data", handler);
   });
 }
 
@@ -69,27 +68,27 @@ function promptPassword(prompt) {
 async function promptPasswordWithConfirm(prompt, confirmPrompt) {
   const password = await promptPassword(prompt);
   if (password.length < 8) {
-    throw new Error('Password must be at least 8 characters');
+    throw new Error("Password must be at least 8 characters");
   }
   const confirm = await promptPassword(confirmPrompt);
   if (password !== confirm) {
-    throw new Error('Passwords do not match');
+    throw new Error("Passwords do not match");
   }
   return password;
 }
 
 function printUsage() {
   console.error([
-    '',
-    '  Usage:',
-    '    node src/cli/index.js encrypt <file>',
-    '    node src/cli/index.js decrypt <file.enc>',
-    '',
-    '  Examples:',
-    '    node src/cli/index.js encrypt report.pdf',
-    '    node src/cli/index.js decrypt report.pdf.enc',
-    '',
-  ].join('\n'));
+    "",
+    "  Usage:",
+    "    node src/cli/index.js encrypt <file>",
+    "    node src/cli/index.js decrypt <file.enc>",
+    "",
+    "  Examples:",
+    "    node src/cli/index.js encrypt report.pdf",
+    "    node src/cli/index.js decrypt report.pdf.enc",
+    "",
+  ].join("\n"));
 }
 
 async function main() {
@@ -100,7 +99,7 @@ async function main() {
     process.exit(1);
   }
 
-  if (!['encrypt', 'decrypt'].includes(command)) {
+  if (!["encrypt", "decrypt"].includes(command)) {
     console.error('❌ Unknown command: "' + command + '"');
     printUsage();
     process.exit(1);
@@ -108,73 +107,73 @@ async function main() {
 
   // Validate file exists
   if (!fs.existsSync(filePath)) {
-    console.error('❌ File not found: ' + filePath);
+    console.error("❌ File not found: " + filePath);
     process.exit(1);
   }
 
   // Security: Check if it's a symlink
   const stats = fs.lstatSync(filePath);
   if (stats.isSymbolicLink()) {
-    console.error('❌ Security error: symlinks are not allowed');
+    console.error("❌ Security error: symlinks are not allowed");
     process.exit(1);
   }
 
   try {
     let outputPath;
     
-    if (command === 'encrypt') {
+    if (command === "encrypt") {
       // Get password with confirmation
       const password = await promptPasswordWithConfirm(
-        '🔑 Enter password: ',
-        '🔑 Confirm password: '
+        "🔑 Enter password: ",
+        "🔑 Confirm password: "
       );
       
-      console.log('⏳ Deriving key with Argon2id (this may take a moment)...');
+      console.log("⏳ Deriving key with Argon2id (this may take a moment)...");
       const data = fs.readFileSync(filePath);
       // Security: Prevent accidental overwrite of existing encrypted files
-      outputPath = filePath + '.enc';
+      outputPath = filePath + ".enc";
       if (fs.existsSync(outputPath)) {
-        console.error('❌ Error: output file already exists: ' + outputPath);
-        console.error('   Delete it first or choose a different output path');
+        console.error("❌ Error: output file already exists: " + outputPath);
+        console.error("   Delete it first or choose a different output path");
         process.exit(1);
       }
 
       const payload = await encryptFile(data, password);
       writeEncryptedFile(outputPath, payload);
-      console.log('✅ Encrypted successfully → ' + outputPath);
+      console.log("✅ Encrypted successfully → " + outputPath);
 
-    } else if (command === 'decrypt') {
+    } else if (command === "decrypt") {
       // Warn if file doesn't end with .enc
-      if (!filePath.endsWith('.enc')) {
-        console.error('⚠️  Warning: file does not have .enc extension');
+      if (!filePath.endsWith(".enc")) {
+        console.error("⚠️  Warning: file does not have .enc extension");
       }
       
-      const password = await promptPassword('🔑 Enter password: ');
+      const password = await promptPassword("🔑 Enter password: ");
       
-      console.log('⏳ Deriving key with Argon2id (this may take a moment)...');
+      console.log("⏳ Deriving key with Argon2id (this may take a moment)...");
       const parsed = readEncryptedFile(filePath);
       const decrypted = await decryptFile(parsed, password);
       
       // Generate output path: remove .enc if present, otherwise add .dec
-      if (filePath.endsWith('.enc')) {
-        outputPath = filePath.slice(0, -4) + '.dec';
+      if (filePath.endsWith(".enc")) {
+        outputPath = filePath.slice(0, -4) + ".dec";
       } else {
-        outputPath = filePath + '.dec';
+        outputPath = filePath + ".dec";
       }
       
       // Security: Check if output already exists to prevent accidental overwrites
       if (fs.existsSync(outputPath)) {
-        console.error('❌ Error: output file already exists: ' + outputPath);
-        console.error('   Delete it first or choose a different output path');
+        console.error("❌ Error: output file already exists: " + outputPath);
+        console.error("   Delete it first or choose a different output path");
         process.exit(1);
       }
       
       fs.writeFileSync(outputPath, decrypted);
-      console.log('✅ Decrypted successfully → ' + outputPath);
+      console.log("✅ Decrypted successfully → " + outputPath);
     }
 
   } catch (err) {
-    console.error('❌ ' + err.message);
+    console.error("❌ " + err.message);
     process.exit(1);
   }
 }

@@ -4,7 +4,7 @@
 // Always increment VERSION when the file format changes.
 
 module.exports = {
-  MAGIC: Buffer.from('SEFT'),   // 4-byte file type identifier
+  MAGIC: Buffer.from("SEFT"),   // 4-byte file type identifier
   VERSION: 0x01,                 // Increment on file format changes
   SALT_LENGTH: 32,               // 256-bit salt — exceeds OWASP 16-byte minimum
   NONCE_LENGTH: 12,              // 96-bit AES-GCM standard nonce

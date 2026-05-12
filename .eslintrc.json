@@ -1,0 +1,27 @@
+{
+  "env": {
+    "node": true,
+    "es2022": true,
+    "jest/globals": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "commonjs"
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-console": "off",
+    "semi": ["error", "always"],
+    "quotes": ["error", "double", { "avoidEscape": true }]
+  },
+  "plugins": ["jest"],
+  "overrides": [
+    {
+      "files": ["tests/**/*.test.js"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
+}
