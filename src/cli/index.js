@@ -146,8 +146,15 @@ async function main() {
       
       console.log('⏳ Deriving key with Argon2id (this may take a moment)...');
       const data = fs.readFileSync(filePath);
-      const payload = await encryptFile(data, password);
+      // Security: Prevent accidental overwrite of existing encrypted files
       outputPath = filePath + '.enc';
+      if (fs.existsSync(outputPath)) {
+        console.error('❌ Error: output file already exists: ' + outputPath);
+        console.error('   Delete it first or choose a different output path');
+        process.exit(1);
+      }
+
+      const payload = await encryptFile(data, password);
       writeEncryptedFile(outputPath, payload);
       console.log('✅ Encrypted successfully → ' + outputPath);
 
