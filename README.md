@@ -8,7 +8,7 @@ A production-grade command-line file encryption tool using **AES-256-GCM** authe
 - **Argon2id** — OWASP-recommended memory-hard KDF (GPU/ASIC resistant)
 - **Secure by default** — Passwords never appear in process lists or shell history
 - **Tamper detection** — Any modification to encrypted files is detected and rejected
-- **Zero key exposure** — Keys are wiped from memory immediately after use
+- **Zero key exposure** — Derived keys are wiped from memory immediately after use (password strings remain until GC, per JS language constraints)
 
 ## Installation
 
@@ -114,7 +114,7 @@ npm test              # Run all tests with coverage
 npm run test:watch    # Watch mode
 ```
 
-**Test coverage:** 96.96% statements, 19 tests passing
+**Test coverage:** 100% statements (98% branches), 32 tests passing
 
 ## Security Considerations
 
@@ -123,7 +123,7 @@ npm run test:watch    # Watch mode
 - Data tampering (GCM authentication tag)
 - Offline brute-force attacks (Argon2id, 64 MiB memory cost)
 - Password exposure via process arguments (TTY-only input)
-- Key material persistence (secure memory zeroing)
+- Derived key material persistence (secure memory zeroing via key.fill(0))
 
 ### NOT Protected Against
 - Keyloggers capturing password at input time
