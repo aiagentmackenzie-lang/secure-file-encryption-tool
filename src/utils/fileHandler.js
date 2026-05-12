@@ -97,7 +97,7 @@ function readEncryptedFile(inputPath) {
   let offset = 0;
 
   // Validate magic bytes
-  const magic = file.slice(offset, offset + MAGIC.length);
+  const magic = file.subarray(offset, offset + MAGIC.length);
   if (!magic.equals(MAGIC)) {
     throw new Error('Invalid file: not a SEFT-encrypted file (magic bytes mismatch)');
   }
@@ -111,21 +111,21 @@ function readEncryptedFile(inputPath) {
   offset += 1;
 
   // Parse and validate salt
-  const salt = file.slice(offset, offset + SALT_LENGTH);
+  const salt = file.subarray(offset, offset + SALT_LENGTH);
   validateBuffer(salt, SALT_LENGTH, 'salt');
   offset += SALT_LENGTH;
 
   // Parse and validate nonce
-  const nonce = file.slice(offset, offset + NONCE_LENGTH);
+  const nonce = file.subarray(offset, offset + NONCE_LENGTH);
   validateBuffer(nonce, NONCE_LENGTH, 'nonce');
   offset += NONCE_LENGTH;
 
   // Auth tag is always the final AUTH_TAG_LENGTH bytes
-  const authTag = file.slice(file.length - AUTH_TAG_LENGTH);
+  const authTag = file.subarray(file.length - AUTH_TAG_LENGTH);
   validateBuffer(authTag, AUTH_TAG_LENGTH, 'authTag');
 
   // Ciphertext sits between nonce end and auth tag start
-  const encrypted = file.slice(offset, file.length - AUTH_TAG_LENGTH);
+  const encrypted = file.subarray(offset, file.length - AUTH_TAG_LENGTH);
   if (encrypted.length === 0) {
     throw new Error('Invalid file: ciphertext section is empty');
   }
