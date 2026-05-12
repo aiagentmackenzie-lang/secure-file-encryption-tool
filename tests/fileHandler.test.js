@@ -40,4 +40,9 @@ describe("SEFT — File Handler Tests", () => {
     fs.writeFileSync(TMP, Buffer.concat([magic, version, rest]));
     expect(() => readEncryptedFile(TMP)).toThrow("Unsupported file version");
   });
+
+  test("readEncryptedFile rejects non-existent file", () => {
+    const nonexistent = path.join(__dirname, "does_not_exist.enc");
+    expect(() => readEncryptedFile(nonexistent)).toThrow("File not found");
+  });
 });

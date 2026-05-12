@@ -42,6 +42,9 @@ async function decryptFile(data, password) {
       throw new Error(DECRYPTION_ERROR);
     }
   } finally {
+    // Defense-in-depth: key is always defined at this point because deriveKey
+    // errors are caught and re-thrown above. The `if (key)` guard exists to
+    // prevent a hypothetical future code restructure from causing a TypeError.
     if (key) {
       key.fill(0);
     }
