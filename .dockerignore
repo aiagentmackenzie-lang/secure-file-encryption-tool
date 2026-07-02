@@ -1,0 +1,9 @@
+node_modules/
+coverage/
+*.enc
+*.dec
+.env
+.DS_Store
+.openclaw/
+.github/
+tests/

@@ -1,0 +1,13 @@
+services:
+  seft:
+    build: .
+    image: seft:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./out:/out
+    # Run interactively, e.g.:
+    #   docker compose run --rm seft encrypt /out/plain.txt
+    #   docker compose run --rm seft decrypt /out/plain.txt.enc
+    entrypoint: ["node", "src/cli/index.js"]
+    command: ["--help"]

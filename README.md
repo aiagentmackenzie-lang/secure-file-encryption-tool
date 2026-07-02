@@ -1,6 +1,6 @@
 # 🔐 Secure File Encryption Tool (SEFT)
 
-A production-grade command-line file encryption tool using **AES-256-GCM** authenticated encryption with **Argon2id** memory-hard key derivation.
+A small, honest command-line file encryption tool using **AES-256-GCM** authenticated encryption with **Argon2id** memory-hard key derivation.
 
 ## Features
 
@@ -13,8 +13,8 @@ A production-grade command-line file encryption tool using **AES-256-GCM** authe
 ## Installation
 
 ```bash
-git clone https://github.com/yourname/secure-encryptor.git
-cd secure-encryptor
+git clone https://github.com/aiagentmackenzie-lang/secure-file-encryption-tool.git
+cd secure-file-encryption-tool
 npm install
 ```
 
@@ -114,7 +114,7 @@ npm test              # Run all tests with coverage
 npm run test:watch    # Watch mode
 ```
 
-**Test coverage:** 100% statements (98% branches), 32 tests passing
+**Test coverage:** 32 tests passing. Coverage is 100% statements / 98% branches for the crypto and file-format modules loaded by the test suite. The TTY-based CLI is not yet covered by automated tests.
 
 ## Security Considerations
 

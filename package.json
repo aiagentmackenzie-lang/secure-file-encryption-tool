@@ -17,7 +17,7 @@
     "cryptography",
     "security"
   ],
-  "author": "Your Name",
+  "author": "Raphael Main / aiagent.mackenzie@gmail.com",
   "license": "MIT",
   "dependencies": {
     "argon2": "^0.41.1"
